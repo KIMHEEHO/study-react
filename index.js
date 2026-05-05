@@ -3,18 +3,18 @@ console.clear();
 import React, { useState, useRef } from "https://cdn.skypack.dev/react";
 import ReactDOM from "https://cdn.skypack.dev/react-dom";
 
-function TodoApp({ todos, addTodo, removeTodo, modifyTodo }) {
+function TodoApp({todosState}) {
   
   const onBtnAddTodoClick = () => {
-    addTodo("리액트공부");
+    todosState.addTodo("리액트공부");
   };
 
   const onBtnDeleteTodoClick = () => {
-    removeTodo(1);
+    todosState.removeTodo(1);
   };
 
   const onBtnModifyTodoClick = () => {
-    modifyTodo(1, "정처기 공부");
+    todosState.modifyTodo(1, "정처기 공부");
   };
   return (
     <>
@@ -23,7 +23,7 @@ function TodoApp({ todos, addTodo, removeTodo, modifyTodo }) {
       <button onClick={onBtnDeleteTodoClick}>삭제</button>
       <h1>todos:</h1>
       <ul>
-        {todos.map((todo, index) => (
+        {todosState.todos.map((todo, index) => (
           <li key={index}>
             {todo.id} {todo.regDate} {todo.content}
           </li>
@@ -66,15 +66,12 @@ function useTodosState() {
 }
 
 function App() {
-  const { todos, addTodo, removeTodo, modifyTodo } = useTodosState();
+  const todosState = useTodosState();
 
   return (
     <>
       <TodoApp
-        todos={todos}
-        addTodo={addTodo}
-        modifyTodo={modifyTodo}
-        removeTodo={removeTodo}
+        todosState={todosState}
       />
     </>
   );
