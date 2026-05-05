@@ -3,32 +3,74 @@ console.clear();
 import React, { useState, useRef } from "https://cdn.skypack.dev/react";
 import ReactDOM from "https://cdn.skypack.dev/react-dom";
 
-function TodoApp({todosState}) {
-  
-  const onBtnAddTodoClick = () => {
-    todosState.addTodo("리액트공부");
-  };
-
-  const onBtnDeleteTodoClick = () => {
-    todosState.removeTodo(1);
-  };
-
-  const onBtnModifyTodoClick = () => {
-    todosState.modifyTodo(1, "정처기 공부");
-  };
+// 할 일 아이템
+function TodoListItem({todosState, todo, index}) {
   return (
-    <>
-      <button onClick={onBtnAddTodoClick}>추가</button>
-      <button onClick={onBtnModifyTodoClick}>수정</button>
-      <button onClick={onBtnDeleteTodoClick}>삭제</button>
-      <h1>todos:</h1>
+  <>
+      <li key={index}>
+        {todo.id} 
+        &nbsp;
+        {todo.regDate}
+        &nbsp;
+        {todo.content}
+        &nbsp;
+      </li>
+      </>)
+}
+
+// 할 일 리스트
+function TodoList ({todosState}) {
+  return (
+  <>
       <ul>
         {todosState.todos.map((todo, index) => (
-          <li key={index}>
-            {todo.id} {todo.regDate} {todo.content}
-          </li>
+        <TodoListItem key={todo.id} todo={todo} index={index} todosState={todosState} />
         ))}
       </ul>
+      </>)  
+}
+
+// 할 일 입력 폼
+function NewTodoForm({ todosState }) {
+  const onSubmit = (e) => {
+    e.preventDefault();
+    const form = e.target;
+
+    form.content.value = form.content.value.trim();
+
+    if (form.content.value.length == 0) {
+      alert("할 일을 입력해 주세요");
+      form.content.focus();
+
+      return;
+    }
+
+    todosState.addTodo(form.content.value);
+    form.content.value = "";
+    form.content.focus();
+  };
+
+  return (
+    <>
+      <form onSubmit={onSubmit}>
+        <input
+          autoComplete="off"
+          name="content"
+          type="text"
+          placeholder="할 일을 입력해 주세요."
+        />
+        <input type="submit" value="추가" />
+        <input type="reset" value="취소" />
+      </form>
+    </>
+  );
+}
+
+function TodoApp({ todosState }) {
+  return (
+    <>
+      <NewTodoForm todosState={todosState} />
+      <TodoList todosState={todosState} />
     </>
   );
 }
@@ -44,7 +86,7 @@ function useTodosState() {
     const newTodo = {
       id,
       content: newContent,
-      regDate: "2026-05-05 21:19:00"
+      regDate: dateToStr(new Date()),
     };
     const newTodos = [...todos, newTodo];
     setTodos(newTodos);
@@ -70,11 +112,30 @@ function App() {
 
   return (
     <>
-      <TodoApp
-        todosState={todosState}
-      />
+      <TodoApp todosState={todosState} />
     </>
   );
 }
 
 ReactDOM.render(<App />, document.getElementById("root"));
+
+// 입력받은 날짜 객체를 YYYY-MM-DD hh:mm:ss로 변환하는 함수
+function dateToStr(d) {
+  const pad = (n) => {
+    return n < 10 ? "0" + n : n;
+  }
+
+  return (
+    d.getFullYear() +
+    "-" +
+    pad(d.getMonth() + 1) +
+    "-" +
+    pad(d.getDate()) +
+    " " +
+    pad(d.getHours()) +
+    ":" +
+    pad(d.getMinutes()) +
+    ":" +
+    pad(d.getSeconds())
+  );
+}
