@@ -3,23 +3,18 @@ console.clear();
 import React, { useState, useRef } from "https://cdn.skypack.dev/react";
 import ReactDOM from "https://cdn.skypack.dev/react-dom";
 
-function TodoApp({todos, addTodo, removeTodo, modifyTodo}) {
-
-  // 추가 버튼 클릭 시 추가 함수 실행
+function TodoApp({ todos, addTodo, removeTodo, modifyTodo }) {
   const onBtnAddTodoClick = () => {
-    addTodo("리액트 공부");
+    addTodo("리액트공부");
   };
 
-  // 삭제 버튼 클릭 시 삭제 함수 실행
   const onBtnDeleteTodoClick = () => {
     removeTodo(1);
   };
 
-  // 수정 버튼 클릭 시 삭제 함수 실행
   const onBtnModifyTodoClick = () => {
     modifyTodo(1, "정처기 공부");
   };
-  
   return (
     <>
       <button onClick={onBtnAddTodoClick}>추가</button>
@@ -37,41 +32,44 @@ function TodoApp({todos, addTodo, removeTodo, modifyTodo}) {
   );
 }
 
-function App() {
+// 커스텀 훅의 이름은 use~State로 짓는다!
+// 커스텀 훅을 사용하여 ui와 관계 없는 핵심 로직과 상태들을 묶을 수 있다!
+function useTodosState() {
   const [todos, setTodos] = useState([]);
   const lastTodoIdRef = useRef(0);
 
-  // 할 일 추가
   const addTodo = (newContent) => {
     const id = ++lastTodoIdRef.current;
-
     const newTodo = {
       id,
       content: newContent,
-      regDate: "2022-04-19 12:12:12"
+      regDate: "2026-05-05 21:19:00"
     };
-
     const newTodos = [...todos, newTodo];
     setTodos(newTodos);
   };
 
-  // 할 일 수정
-  const modifyTodo = (index, newContent) => {
-    const newTodos = todos.map((todo, _index) =>
-      _index != index ? todo : { ...todo, content: newContent }
-    );
-    setTodos(newTodos);
+  const removeTodo = (index) => {
+    const newTodo = todos.filter((_, _index) => _index != index);
+    setTodos(newTodo);
   };
 
-  // 할 일 삭제
-  const removeTodo = (index) => {
-    const newTodos = todos.filter((_, _index) => _index != index);
-    setTodos(newTodos);
+  const modifyTodo = (index, newContent) => {
+    const newTodo = todos.map((todo, _index) =>
+      _index != index ? todo : { ...todo, content: newContent }
+    );
+    setTodos(newTodo);
   };
+
+  return { todos, addTodo, removeTodo, modifyTodo };
+}
+
+function App() {
+  const { todos, addTodo, removeTodo, modifyTodo } = useTodosState();
 
   return (
     <>
-     <TodoApp
+      <TodoApp
         todos={todos}
         addTodo={addTodo}
         modifyTodo={modifyTodo}
