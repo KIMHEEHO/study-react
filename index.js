@@ -4,18 +4,25 @@ import React, { useState, useRef } from "https://cdn.skypack.dev/react";
 import ReactDOM from "https://cdn.skypack.dev/react-dom";
 
 // 할 일 아이템
-function TodoListItem({todosState, todo, index}) {
+function TodoListItem({ todosState, todo, index }) {
+  // 할 일 삭제
+  const removeTodo = () => {
+    todosState.removeTodo(index);
+  };
+
   return (
-  <>
+    <>
       <li key={index}>
-        {todo.id} 
+        {todo.id}
         &nbsp;
         {todo.regDate}
         &nbsp;
         {todo.content}
         &nbsp;
+        <button onClick={removeTodo}>삭제</button>
       </li>
-      </>)
+    </>
+  );
 }
 
 // 할 일 리스트
